@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:api_com/api_com.dart';
+import 'package:api_com/src/core/com.dart';
 import 'package:http/http.dart' as http;
 
 class ComResponse<Model extends BaseModel> {
@@ -23,7 +24,8 @@ class ComResponse<Model extends BaseModel> {
     required http.Response response,
     required ComRequest request,
   }) {
-    ResponseStatus status = Com.statusCodeToResponseStatus(response.statusCode);
+    ResponseStatus status =
+        ComInterface.statusCodeToResponseStatus(response.statusCode);
     Model? payload;
     if (request.decoder != null) {
       payload =

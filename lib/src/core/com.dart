@@ -14,10 +14,10 @@ class ComConfig {
   });
 }
 
-class Com {
+class ComInterface {
   static const String _packageName = "API_COM";
 
-  static ComConfig config = ComConfig(onConnectionLose: () {
+  ComConfig config = ComConfig(onConnectionLose: () {
     Print.red("NO CONNECTIVITY", name: _packageName);
   });
 
@@ -32,7 +32,7 @@ class Com {
     }
   }
 
-  static Future<ComResponse<Model>> makeRequest<Model extends BaseModel>(
+  Future<ComResponse<Model>> makeRequest<Model extends BaseModel>(
       ComRequest request) async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
@@ -59,7 +59,7 @@ class Com {
   }
 
   // ignore: unused_element
-  static Future<ComResponse<Model>> _callPost<Model extends BaseModel>(
+  Future<ComResponse<Model>> _callPost<Model extends BaseModel>(
       ComRequest request) async {
     final rawResponse = await http.post(
       Uri.parse(request.getUrl()),
@@ -75,7 +75,7 @@ class Com {
   }
 
   // ignore: unused_element
-  static Future<ComResponse<Model>> _callPut<Model extends BaseModel>(
+  Future<ComResponse<Model>> _callPut<Model extends BaseModel>(
       ComRequest request) async {
     final rawResponse = await http.put(
       Uri.parse(request.getUrl()),
@@ -91,7 +91,7 @@ class Com {
   }
 
   // ignore: unused_element
-  static Future<ComResponse<Model>> _callDelete<Model extends BaseModel>(
+  Future<ComResponse<Model>> _callDelete<Model extends BaseModel>(
       ComRequest request) async {
     final rawResponse = await http.delete(
       Uri.parse(request.getUrl()),
@@ -107,7 +107,7 @@ class Com {
   }
 
   // ignore: unused_element
-  static Future<ComResponse<Model>> _callPatch<Model extends BaseModel>(
+  Future<ComResponse<Model>> _callPatch<Model extends BaseModel>(
       ComRequest request) async {
     final rawResponse = await http.patch(
       Uri.parse(request.getUrl()),
@@ -123,7 +123,7 @@ class Com {
   }
 
   // ignore: unused_element
-  static Future<ComResponse<Model>> _callGet<Model extends BaseModel>(
+  Future<ComResponse<Model>> _callGet<Model extends BaseModel>(
       ComRequest request) async {
     final rawResponse = await http.get(
       Uri.parse(request.getUrl()),
@@ -137,7 +137,7 @@ class Com {
   }
 
   //...
-  static String httpMethodEnumToString(HttpMethod method) {
+  String httpMethodEnumToString(HttpMethod method) {
     switch (method) {
       case HttpMethod.post:
         return "post";
