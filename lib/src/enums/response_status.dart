@@ -8,4 +8,5 @@ enum ResponseStatus {
   unknownStatus,
   notFound,
   none,
+  connectionProblem,
 }
