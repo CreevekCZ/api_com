@@ -4,6 +4,7 @@ enum ResponseStatus {
   accepted,
   noContent,
   serverError,
+  unauthorized,
   error,
   unknownStatus,
   notFound,

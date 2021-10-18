@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:api_com/api_com.dart';
-import 'package:api_com/src/core/com.dart';
+import 'package:api_com/src/core/com_interface.dart';
 import 'package:http/http.dart' as http;
 
-class ComResponse<Model extends BaseModel> {
+class ComResponse<Model> {
   final ComRequest request;
   final http.Response? response;
   final ResponseStatus status;
@@ -28,9 +28,14 @@ class ComResponse<Model extends BaseModel> {
         ComInterface.statusCodeToResponseStatus(response.statusCode);
     Model? payload;
     if (request.decoder != null) {
-      payload =
-          request.decoder!(_decodeUtf8BodyBytes(response.bodyBytes), status)
-              as Model?;
+      try {
+        payload =
+            request.decoder!(_decodeUtf8BodyBytes(response.bodyBytes), status)
+                as Model?;
+      } catch (e) {
+        // ignore: avoid_print
+        print(e);
+      }
     }
 
     return ComResponse(
