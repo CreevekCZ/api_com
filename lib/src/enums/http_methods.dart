@@ -5,5 +5,3 @@ enum HttpMethod {
   patch,
   get,
 }
-
-

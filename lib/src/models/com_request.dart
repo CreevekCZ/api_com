@@ -24,7 +24,7 @@ class ComRequest<Model> {
 
   ComRequest({
     required this.method,
-    required this.protocol,
+    this.protocol = "https",
     required this.host,
     required this.uri,
     this.token,

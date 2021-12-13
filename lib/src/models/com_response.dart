@@ -9,6 +9,8 @@ class ComResponse<Model> {
   final http.Response? response;
   final ResponseStatus status;
 
+  bool get isSuccess => status == ResponseStatus.success;
+
   Model Function(dynamic rawPayload, ResponseStatus status)? decoder;
 
   Model? payload;

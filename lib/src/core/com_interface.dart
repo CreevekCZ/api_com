@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:api_com/api_com.dart';
-import 'package:api_com/src/core/com_config.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:print_color/print_color.dart';
@@ -21,11 +19,11 @@ class ComInterface {
       Print.green(statusMessagePayload, name: _packageName);
     } else {
       Print.red(statusMessagePayload, name: _packageName);
+      Print.white(response.body);
     }
   }
 
-  Future<ComResponse<Model>> makeRequest<Model>(
-      ComRequest request) async {
+  Future<ComResponse<Model>> makeRequest<Model>(ComRequest request) async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       Print.red("NO CONNECTIVITY", name: _packageName);
@@ -50,9 +48,7 @@ class ComInterface {
     }
   }
 
-  // ignore: unused_element
-  Future<ComResponse<Model>> _callPost<Model>(
-      ComRequest request) async {
+  Future<ComResponse<Model>> _callPost<Model>(ComRequest request) async {
     final rawResponse = await http.post(
       Uri.parse(request.getUrl()),
       headers: request.headers,
@@ -66,9 +62,7 @@ class ComInterface {
         request: request, response: rawResponse);
   }
 
-  // ignore: unused_element
-  Future<ComResponse<Model>> _callPut<Model>(
-      ComRequest request) async {
+  Future<ComResponse<Model>> _callPut<Model>(ComRequest request) async {
     final rawResponse = await http.put(
       Uri.parse(request.getUrl()),
       headers: request.headers,
@@ -82,9 +76,7 @@ class ComInterface {
         request: request, response: rawResponse);
   }
 
-  // ignore: unused_element
-  Future<ComResponse<Model>> _callDelete<Model>(
-      ComRequest request) async {
+  Future<ComResponse<Model>> _callDelete<Model>(ComRequest request) async {
     final rawResponse = await http.delete(
       Uri.parse(request.getUrl()),
       headers: request.headers,
@@ -98,9 +90,7 @@ class ComInterface {
         request: request, response: rawResponse);
   }
 
-  // ignore: unused_element
-  Future<ComResponse<Model>> _callPatch<Model>(
-      ComRequest request) async {
+  Future<ComResponse<Model>> _callPatch<Model>(ComRequest request) async {
     final rawResponse = await http.patch(
       Uri.parse(request.getUrl()),
       headers: request.headers,
@@ -114,9 +104,7 @@ class ComInterface {
         request: request, response: rawResponse);
   }
 
-  // ignore: unused_element
-  Future<ComResponse<Model>> _callGet<Model>(
-      ComRequest request) async {
+  Future<ComResponse<Model>> _callGet<Model>(ComRequest request) async {
     final rawResponse = await http.get(
       Uri.parse(request.getUrl()),
       headers: request.headers,
@@ -128,7 +116,6 @@ class ComInterface {
         request: request, response: rawResponse);
   }
 
-  //...
   String httpMethodEnumToString(HttpMethod method) {
     switch (method) {
       case HttpMethod.post:
