@@ -5,33 +5,46 @@ import 'package:http/http.dart' as http;
 import 'package:print_color/print_color.dart';
 
 class ComInterface {
-  static const String _packageName = "API_COM";
+  static const String packageName = "API_COM";
 
   ComConfig config = ComConfig(onConnectionLose: () {
-    Print.red("NO CONNECTIVITY", name: _packageName);
+    Print.red("NO CONNECTIVITY", name: packageName);
   });
 
-  static void printResult(http.Response response) {
+  static void _printResult(http.Response response) {
     String statusMessagePayload =
         "METHOD: ${response.request!.method}, STATUS: ${response.statusCode}, URL: ${response.request!.url}";
 
     if (response.statusCode == 200) {
-      Print.green(statusMessagePayload, name: _packageName);
+      Print.green(statusMessagePayload, name: packageName);
     } else {
-      Print.red(statusMessagePayload, name: _packageName);
+      Print.red(statusMessagePayload, name: packageName);
       Print.white(response.body);
     }
   }
 
   Future<ComResponse<Model>> makeRequest<Model>(ComRequest request) async {
+    _applyConfigToRequest(request);
+
+    try {
+      _validateRequest(request);
+    } catch (e) {
+      Print.red("Invalid request", name: packageName);
+      return ComResponse<Model>(
+        request: request,
+        status: ResponseStatus.invalidRequest,
+      );
+    }
+
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
-      Print.red("NO CONNECTIVITY", name: _packageName);
+      Print.red("NO CONNECTIVITY", name: packageName);
       config.onConnectionLose();
+
       return ComResponse(
-          status: ResponseStatus.connectionProblem,
-          request: request,
-          response: null);
+        status: ResponseStatus.connectionProblem,
+        request: request,
+      );
     }
 
     switch (request.method) {
@@ -56,10 +69,13 @@ class ComInterface {
       encoding: config.encoding,
     );
 
-    printResult(rawResponse);
+    _printResult(rawResponse);
 
     return ComResponse<Model>.fromResponse(
-        request: request, response: rawResponse);
+      request: request,
+      response: rawResponse,
+      preDecorder: config.preDecorder,
+    );
   }
 
   Future<ComResponse<Model>> _callPut<Model>(ComRequest request) async {
@@ -70,10 +86,13 @@ class ComInterface {
       encoding: config.encoding,
     );
 
-    printResult(rawResponse);
+    _printResult(rawResponse);
 
     return ComResponse<Model>.fromResponse(
-        request: request, response: rawResponse);
+      request: request,
+      response: rawResponse,
+      preDecorder: config.preDecorder,
+    );
   }
 
   Future<ComResponse<Model>> _callDelete<Model>(ComRequest request) async {
@@ -84,10 +103,13 @@ class ComInterface {
       encoding: config.encoding,
     );
 
-    printResult(rawResponse);
+    _printResult(rawResponse);
 
     return ComResponse<Model>.fromResponse(
-        request: request, response: rawResponse);
+      request: request,
+      response: rawResponse,
+      preDecorder: config.preDecorder,
+    );
   }
 
   Future<ComResponse<Model>> _callPatch<Model>(ComRequest request) async {
@@ -98,10 +120,13 @@ class ComInterface {
       encoding: config.encoding,
     );
 
-    printResult(rawResponse);
+    _printResult(rawResponse);
 
     return ComResponse<Model>.fromResponse(
-        request: request, response: rawResponse);
+      request: request,
+      response: rawResponse,
+      preDecorder: config.preDecorder,
+    );
   }
 
   Future<ComResponse<Model>> _callGet<Model>(ComRequest request) async {
@@ -110,10 +135,13 @@ class ComInterface {
       headers: request.headers,
     );
 
-    printResult(rawResponse);
+    _printResult(rawResponse);
 
     return ComResponse<Model>.fromResponse(
-        request: request, response: rawResponse);
+      request: request,
+      response: rawResponse,
+      preDecorder: config.preDecorder,
+    );
   }
 
   String httpMethodEnumToString(HttpMethod method) {
@@ -152,5 +180,21 @@ class ComInterface {
         return ResponseStatus.serverError;
     }
     return ResponseStatus.unknownStatus;
+  }
+
+  void _applyConfigToRequest(ComRequest request) {
+    if (request.host == null && config.mainHost != null) {
+      request.host = config.mainHost!;
+    }
+
+    if (config.preferredProtocol != null) {
+      request.protocol = config.preferredProtocol!;
+    }
+  }
+
+  void _validateRequest(ComRequest request) {
+    if (request.host == null) {
+      throw Exception("Host is null");
+    }
   }
 }

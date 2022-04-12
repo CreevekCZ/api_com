@@ -10,4 +10,5 @@ enum ResponseStatus {
   notFound,
   none,
   connectionProblem,
+  invalidRequest,
 }

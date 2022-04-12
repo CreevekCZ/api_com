@@ -4,14 +4,14 @@ class ComRequest<Model> {
   final HttpMethod method;
 
   /// https by default
-  final String protocol;
+  String protocol;
 
   /// for example:
   /// ```dart
   /// var host = "example.com";
   /// var host = "www.example.com";
   /// ```
-  final String host;
+  String? host;
 
   /// for example:
   /// ```dart
@@ -66,7 +66,10 @@ class ComRequest<Model> {
   }) : _headers = headers;
 
   String getUrl() {
-    return protocol + "://" + host + uri + _encodeParametersToUrl();
+    if (host == null) {
+      throw Exception("Host is null");
+    }
+    return protocol + "://" + host! + uri + _encodeParametersToUrl();
   }
 
   String _encodeParametersToUrl() {
