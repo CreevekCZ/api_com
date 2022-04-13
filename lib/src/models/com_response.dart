@@ -1,16 +1,20 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:api_com/api_com.dart';
-import 'package:api_com/src/core/com_interface.dart';
+import 'package:api_com/src/core/com.dart';
 import 'package:http/http.dart' as http;
-import 'package:print_color/print_color.dart';
+import 'package:palestine_console/palestine_console.dart';
 
 class ComResponse<Model> {
+  /// Original [ComReuqest] used to get the response
   final ComRequest request;
+
+  /// Raw response from the server [http.Response]
   final http.Response? response;
   final ResponseStatus status;
 
   bool get isSuccess => status == ResponseStatus.success;
+  int? get statusCode => response?.statusCode;
 
   Model Function(dynamic rawPayload, ResponseStatus status)? decoder;
 
@@ -41,7 +45,8 @@ class ComResponse<Model> {
 
         payload = request.decoder!(decodedBody, status) as Model?;
       } catch (e) {
-        Print.red(e, name: ComInterface.packageName);
+        Print.red("Unable to decode payload. Error:" + e.toString(),
+            name: apiComPackageName);
       }
     }
 
@@ -57,11 +62,5 @@ class ComResponse<Model> {
     Map<String, dynamic> decodedJson = jsonDecode(utf8.decode(body));
 
     return decodedJson;
-
-    // if (decodedJson.containsKey("payload")) {
-    //   return decodedJson["payload"];
-    // }
-
-    return null;
   }
 }

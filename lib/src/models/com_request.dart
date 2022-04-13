@@ -38,6 +38,7 @@ class ComRequest<Model> {
 
   Model? Function(dynamic rawPayload, ResponseStatus status)? decoder;
 
+  ///Parameters are automatically sent to the server as request JSON body but in the case of GET method they are encoded in URL as GET parameters
   Map<String, dynamic>? parameters;
 
   Map<String, String> get headers {

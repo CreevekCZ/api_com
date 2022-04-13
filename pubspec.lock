@@ -165,6 +165,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.0"
+  palestine_console:
+    dependency: "direct main"
+    description:
+      name: palestine_console
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.10"
   path:
     dependency: transitive
     description:
@@ -193,13 +200,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
-  print_color:
-    dependency: "direct main"
-    description:
-      name: print_color
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.3"
   sky_engine:
     dependency: transitive
     description: flutter

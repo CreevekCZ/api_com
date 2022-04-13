@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'package:api_com/api_com.dart';
+import 'package:api_com/src/core/com.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
-import 'package:print_color/print_color.dart';
+import 'package:palestine_console/palestine_console.dart';
 
 class ComInterface {
-  static const String packageName = "API_COM";
-
   ComConfig config = ComConfig(onConnectionLose: () {
-    Print.red("NO CONNECTIVITY", name: packageName);
+    Print.red("NO CONNECTIVITY", name: apiComPackageName);
   });
 
   static void _printResult(http.Response response) {
@@ -16,10 +15,10 @@ class ComInterface {
         "METHOD: ${response.request!.method}, STATUS: ${response.statusCode}, URL: ${response.request!.url}";
 
     if (response.statusCode == 200) {
-      Print.green(statusMessagePayload, name: packageName);
+      Print.green(statusMessagePayload, name: apiComPackageName);
     } else {
-      Print.red(statusMessagePayload, name: packageName);
-      Print.white(response.body);
+      Print.red(statusMessagePayload, name: apiComPackageName);
+      Print.white(response.body, name: apiComPackageName);
     }
   }
 
@@ -29,7 +28,7 @@ class ComInterface {
     try {
       _validateRequest(request);
     } catch (e) {
-      Print.red("Invalid request", name: packageName);
+      Print.red("Invalid request", name: apiComPackageName);
       return ComResponse<Model>(
         request: request,
         status: ResponseStatus.invalidRequest,
@@ -38,8 +37,11 @@ class ComInterface {
 
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
-      Print.red("NO CONNECTIVITY", name: packageName);
-      config.onConnectionLose();
+      Print.red("NO CONNECTIVITY", name: apiComPackageName);
+
+      if (config.onConnectionLose != null) {
+        config.onConnectionLose!();
+      }
 
       return ComResponse(
         status: ResponseStatus.connectionProblem,
