@@ -1,4 +1,7 @@
-import 'package:api_com/api_com.dart';
+import 'dart:convert';
+import 'package:api_com/src/enums/http_methods.dart';
+import 'package:api_com/src/enums/response_status.dart';
+import 'package:api_com/src/extensions/php_uri.dart';
 
 class ComRequest<Model> {
   final HttpMethod method;
@@ -70,52 +73,23 @@ class ComRequest<Model> {
     if (host == null) {
       throw Exception("Host is null");
     }
-    return protocol + "://" + host! + uri + _encodeParametersToUrl();
+
+    return PhpUri.encodeForPhpServer(
+      host: host!,
+      uri: uri,
+      parameters: parameters,
+    );
   }
 
-  String _encodeParametersToUrl() {
-    String encodedParameters = "";
-    String andSymbol = !uri.contains("?") ? "?" : "&";
-
-    Map<String, dynamic> arrayParameters = {};
-
-    if (method == HttpMethod.get && parameters != null) {
-      parameters?.forEach(
-        (key, value) {
-          var encodedValue = Uri.encodeComponent(value.toString());
-
-          if (value is Iterable) {
-            arrayParameters[key] = encodedValue;
-            return;
-          }
-          if (value != null) {
-            encodedParameters += "$andSymbol$key=$encodedValue";
-            andSymbol = "&";
-          }
-        },
-      );
+  String getBody() {
+    if (method == HttpMethod.get) {
+      throw Exception("GET method doesn't have body");
     }
 
-    encodedParameters =
-        _encodeArrayParameters(arrayParameters, encodedParameters, andSymbol);
-
-    return encodedParameters;
-  }
-
-  dynamic _encodeArrayParameters(
-      arrayParameters, encodedParameters, andSymbol) {
-    andSymbol = !encodedParameters.contains("?") ? "?" : "&";
-
-    if (arrayParameters.isNotEmpty) {
-      arrayParameters.forEach((key, value) {
-        if (value != null) {
-          var encodedValue = Uri.encodeComponent(value.toString());
-          encodedParameters += "$andSymbol$key[]=$encodedValue";
-          andSymbol = "&";
-        }
-      });
+    if (parameters == null) {
+      return "";
     }
 
-    return encodedParameters;
+    return jsonEncode(parameters);
   }
 }

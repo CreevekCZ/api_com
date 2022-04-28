@@ -1,9 +1,9 @@
 name: api_com
 
-description: Package for easy communication with PHP APIs. 
+description: Package for easy communication with PHP APIs.
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.13.0 <3.0.0'
 
 dependencies: 
   http: ^0.13.3
@@ -13,3 +13,4 @@ dependencies:
 
 dev_dependencies:
   flutter_lints: ^1.0.0
+  test: ^1.21.1

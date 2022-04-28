@@ -4,6 +4,7 @@ export 'src/enums/enums.dart';
 export 'src/models/models.dart';
 export 'src/core/com_config.dart';
 import 'src/core/com.dart';
+export 'src/extensions/php_uri.dart' show PhpUri;
 
 class _ComImpl extends ComInterface {}
 
