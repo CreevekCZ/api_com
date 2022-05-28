@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:api_com/src/enums/http_methods.dart';
 import 'package:api_com/src/models/com_request.dart';
 import 'package:test/test.dart';

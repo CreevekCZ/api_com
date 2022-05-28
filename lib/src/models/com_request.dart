@@ -77,7 +77,7 @@ class ComRequest<Model> {
     return PhpUri.encodeForPhpServer(
       host: host!,
       uri: uri,
-      parameters: parameters,
+      parameters: method == HttpMethod.get ? parameters : null,
     );
   }
 

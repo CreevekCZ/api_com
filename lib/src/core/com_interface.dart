@@ -10,9 +10,12 @@ class ComInterface {
     Print.red("NO CONNECTIVITY", name: apiComPackageName);
   });
 
-  static void _printResult(http.Response response) {
+  static void _printResult(
+    http.Response response,
+    Stopwatch stopwatch,
+  ) {
     String statusMessagePayload =
-        "METHOD: ${response.request!.method}, STATUS: ${response.statusCode}, URL: ${response.request!.url}";
+        "[${stopwatch.elapsedMilliseconds} ms], METHOD: ${response.request!.method}, STATUS: ${response.statusCode}, URL: ${response.request!.url}";
 
     if (response.statusCode == 200) {
       Print.green(statusMessagePayload, name: apiComPackageName);
@@ -23,6 +26,8 @@ class ComInterface {
   }
 
   Future<ComResponse<Model>> makeRequest<Model>(ComRequest request) async {
+    Stopwatch stopwatch = Stopwatch()..start();
+
     _applyConfigToRequest(request);
 
     try {
@@ -51,19 +56,22 @@ class ComInterface {
 
     switch (request.method) {
       case HttpMethod.post:
-        return await _callPost<Model>(request);
+        return await _callPost<Model>(request, stopwatch);
       case HttpMethod.get:
-        return await _callGet<Model>(request);
+        return await _callGet<Model>(request, stopwatch);
       case HttpMethod.put:
-        return await _callPut<Model>(request);
+        return await _callPut<Model>(request, stopwatch);
       case HttpMethod.delete:
-        return await _callDelete<Model>(request);
+        return await _callDelete<Model>(request, stopwatch);
       case HttpMethod.patch:
-        return await _callPatch<Model>(request);
+        return await _callPatch<Model>(request, stopwatch);
     }
   }
 
-  Future<ComResponse<Model>> _callPost<Model>(ComRequest request) async {
+  Future<ComResponse<Model>> _callPost<Model>(
+    ComRequest request,
+    Stopwatch stopwatch,
+  ) async {
     final rawResponse = await http.post(
       Uri.parse(request.getUrl()),
       headers: request.headers,
@@ -71,7 +79,7 @@ class ComInterface {
       encoding: config.encoding,
     );
 
-    _printResult(rawResponse);
+    _printResult(rawResponse, stopwatch);
 
     return ComResponse<Model>.fromResponse(
       request: request,
@@ -80,7 +88,10 @@ class ComInterface {
     );
   }
 
-  Future<ComResponse<Model>> _callPut<Model>(ComRequest request) async {
+  Future<ComResponse<Model>> _callPut<Model>(
+    ComRequest request,
+    Stopwatch stopwatch,
+  ) async {
     final rawResponse = await http.put(
       Uri.parse(request.getUrl()),
       headers: request.headers,
@@ -88,7 +99,7 @@ class ComInterface {
       encoding: config.encoding,
     );
 
-    _printResult(rawResponse);
+    _printResult(rawResponse, stopwatch);
 
     return ComResponse<Model>.fromResponse(
       request: request,
@@ -97,7 +108,10 @@ class ComInterface {
     );
   }
 
-  Future<ComResponse<Model>> _callDelete<Model>(ComRequest request) async {
+  Future<ComResponse<Model>> _callDelete<Model>(
+    ComRequest request,
+    Stopwatch stopwatch,
+  ) async {
     final rawResponse = await http.delete(
       Uri.parse(request.getUrl()),
       headers: request.headers,
@@ -105,7 +119,7 @@ class ComInterface {
       encoding: config.encoding,
     );
 
-    _printResult(rawResponse);
+    _printResult(rawResponse, stopwatch);
 
     return ComResponse<Model>.fromResponse(
       request: request,
@@ -114,7 +128,10 @@ class ComInterface {
     );
   }
 
-  Future<ComResponse<Model>> _callPatch<Model>(ComRequest request) async {
+  Future<ComResponse<Model>> _callPatch<Model>(
+    ComRequest request,
+    Stopwatch stopwatch,
+  ) async {
     final rawResponse = await http.patch(
       Uri.parse(request.getUrl()),
       headers: request.headers,
@@ -122,7 +139,7 @@ class ComInterface {
       encoding: config.encoding,
     );
 
-    _printResult(rawResponse);
+    _printResult(rawResponse, stopwatch);
 
     return ComResponse<Model>.fromResponse(
       request: request,
@@ -131,13 +148,16 @@ class ComInterface {
     );
   }
 
-  Future<ComResponse<Model>> _callGet<Model>(ComRequest request) async {
+  Future<ComResponse<Model>> _callGet<Model>(
+    ComRequest request,
+    Stopwatch stopwatch,
+  ) async {
     final rawResponse = await http.get(
       Uri.parse(request.getUrl()),
       headers: request.headers,
     );
 
-    _printResult(rawResponse);
+    _printResult(rawResponse, stopwatch);
 
     return ComResponse<Model>.fromResponse(
       request: request,
