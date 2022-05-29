@@ -1,4 +1,4 @@
-import 'dart:convert';
+  import 'dart:convert';
 import 'package:api_com/api_com.dart';
 import 'package:api_com/src/core/com.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -15,7 +15,7 @@ class ComInterface {
     Stopwatch stopwatch,
   ) {
     String statusMessagePayload =
-        "[${stopwatch.elapsedMilliseconds} ms], METHOD: ${response.request!.method}, STATUS: ${response.statusCode}, URL: ${response.request!.url}";
+        "METHOD: ${response.request!.method}, STATUS: ${response.statusCode}, URL: ${response.request!.url}  ${stopwatch.elapsedMilliseconds} ms";
 
     if (response.statusCode == 200) {
       Print.green(statusMessagePayload, name: apiComPackageName);

@@ -1,4 +1,4 @@
-extension PhpUri on Uri {
+extension UriPhpEstension on Uri {
   static String encodeForPhpServer({
     String protocol = 'https',
     required String host,

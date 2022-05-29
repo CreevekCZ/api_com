@@ -1,4 +1,4 @@
-extension DateTimeAtom on DateTime {
+extension DateTimeAtomExtension on DateTime {
   String _fixedLength(int n, int count) => n.toString().padLeft(count, "0");
 
   String toAtom() {

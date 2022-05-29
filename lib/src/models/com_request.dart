@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:api_com/src/enums/http_methods.dart';
 import 'package:api_com/src/enums/response_status.dart';
-import 'package:api_com/src/extensions/php_uri.dart';
+import 'package:api_com/src/extensions/uri_php_extension.dart';
 
 class ComRequest<Model> {
   final HttpMethod method;
@@ -74,7 +74,7 @@ class ComRequest<Model> {
       throw Exception("Host is null");
     }
 
-    return PhpUri.encodeForPhpServer(
+    return UriPhpEstension.encodeForPhpServer(
       host: host!,
       uri: uri,
       parameters: method == HttpMethod.get ? parameters : null,

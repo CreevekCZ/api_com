@@ -1,4 +1,4 @@
-import 'package:api_com/src/extensions/php_uri.dart' show PhpUri;
+import 'package:api_com/src/extensions/uri_php_extension.dart' show UriPhpEstension;
 import 'package:test/test.dart';
 
 void main() {
@@ -6,7 +6,7 @@ void main() {
     String exceptationEncoded =
         "https://example.com/api/v1/events?active=true&posId[]=1&posId[]=2&userId[]=3";
 
-    var encodedUrl = PhpUri.encodeForPhpServer(
+    var encodedUrl = UriPhpEstension.encodeForPhpServer(
       host: 'example.com',
       uri: '/api/v1/events',
       parameters: {
