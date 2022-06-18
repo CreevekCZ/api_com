@@ -2,7 +2,7 @@ name: api_com
 
 description: Package for easy communication with PHP APIs.
 repository: https://github.com/CreevekCZ/api_com
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: '>=2.17.0 <3.0.0'

@@ -1,4 +1,4 @@
-  import 'dart:convert';
+import 'dart:convert';
 import 'package:api_com/api_com.dart';
 import 'package:api_com/src/core/com.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -9,6 +9,10 @@ class ComInterface {
   ComConfig config = ComConfig(onConnectionLose: () {
     Print.red("NO CONNECTIVITY", name: apiComPackageName);
   });
+
+  final Connectivity _connectivity;
+
+  ComInterface() : _connectivity = Connectivity();
 
   static void _printResult(
     http.Response response,
@@ -40,7 +44,7 @@ class ComInterface {
       );
     }
 
-    var connectivityResult = await (Connectivity().checkConnectivity());
+    var connectivityResult = await (_connectivity.checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       Print.red("NO CONNECTIVITY", name: apiComPackageName);
 
@@ -218,5 +222,14 @@ class ComInterface {
     if (request.host == null) {
       throw Exception("Host is null");
     }
+  }
+
+  Future<bool> hasInternetConnection() async {
+    var connectionStatus = await _connectivity.checkConnectivity();
+    return connectionStatus != ConnectivityResult.none;
+  }
+
+  Connectivity getConnectivityInstance() {
+    return _connectivity;
   }
 }

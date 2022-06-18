@@ -61,7 +61,7 @@ class ComRequest<Model> {
   ComRequest({
     this.protocol = "https",
     required this.method,
-    required this.host,
+    this.host,
     required this.uri,
     this.token,
     this.parameters,
