@@ -58,6 +58,9 @@ class ComRequest<Model> {
     return headersList;
   }
 
+  /// if this parameter is true then onConnectionLose() action defined in ConConfig will not be called
+  bool skipOnConnectionLoseAction;
+
   ComRequest({
     this.protocol = "https",
     required this.method,
@@ -67,6 +70,7 @@ class ComRequest<Model> {
     this.parameters,
     this.decoder,
     Map<String, String>? headers,
+    this.skipOnConnectionLoseAction = false,
   }) : _headers = headers;
 
   String getUrl() {

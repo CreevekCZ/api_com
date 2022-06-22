@@ -48,7 +48,8 @@ class ComInterface {
     if (connectivityResult == ConnectivityResult.none) {
       Print.red("NO CONNECTIVITY", name: apiComPackageName);
 
-      if (config.onConnectionLose != null) {
+      if (config.onConnectionLose != null &&
+          request.skipOnConnectionLoseAction == false) {
         config.onConnectionLose!();
       }
 
