@@ -61,6 +61,9 @@ class ComRequest<Model> {
   /// if this parameter is true then onConnectionLose() action defined in ConConfig will not be called
   bool skipOnConnectionLoseAction;
 
+  /// if this parameter is true than decoding of rawPayload will ignore ComConfig:preDecoder function
+  bool ignorePreDecoder;
+
   ComRequest({
     this.protocol = "https",
     required this.method,
@@ -71,6 +74,7 @@ class ComRequest<Model> {
     this.decoder,
     Map<String, String>? headers,
     this.skipOnConnectionLoseAction = false,
+    this.ignorePreDecoder = false,
   }) : _headers = headers;
 
   String getUrl() {

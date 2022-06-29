@@ -39,7 +39,7 @@ class ComResponse<Model> {
       try {
         dynamic decodedBody = _decodeUtf8BodyBytes(response.bodyBytes);
 
-        if (preDecorder != null) {
+        if (preDecorder != null && request.ignorePreDecoder == false) {
           decodedBody = preDecorder(decodedBody);
         }
 
