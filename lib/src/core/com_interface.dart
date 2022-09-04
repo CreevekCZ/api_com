@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:api_com/api_com.dart';
 import 'package:api_com/src/core/com.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:palestine_console/palestine_console.dart';
 
@@ -195,6 +194,9 @@ class ComInterface {
         return ResponseStatus.created;
 
       case 400:
+        return ResponseStatus.unauthorized;
+
+      case 401:
         return ResponseStatus.unauthorized;
 
       case 202:
