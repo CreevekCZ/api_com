@@ -45,7 +45,8 @@ class ComResponse<Model> {
 
         payload = request.decoder!(decodedBody, status) as Model?;
       } catch (e) {
-        Print.red("Unable to decode payload. Error:" + e.toString(),
+        Print.red(
+            "Unable to decode payload. Error: ${Model.runtimeType} ${e.toString()}",
             name: apiComPackageName);
       }
     }

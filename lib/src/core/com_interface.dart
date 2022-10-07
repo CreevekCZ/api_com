@@ -45,7 +45,8 @@ class ComInterface {
 
     var connectivityResult = await (_connectivity.checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
-      Print.red("NO CONNECTIVITY", name: apiComPackageName);
+      Print.red("NO CONNECTIVITY | ${request.getUrl()}",
+          name: apiComPackageName);
 
       if (config.onConnectionLose != null &&
           request.skipOnConnectionLoseAction == false) {
