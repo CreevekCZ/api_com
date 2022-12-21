@@ -6,33 +6,18 @@ import 'package:http/http.dart' as http;
 import 'package:palestine_console/palestine_console.dart';
 
 class ComResponse<Model> {
-  /// Original [ComReuqest] used to get the response
-  final ComRequest request;
-
-  /// Raw response from the server [http.Response]
-  final http.Response? response;
-  final ResponseStatus status;
-
-  bool get isSuccess => status == ResponseStatus.success;
-  int? get statusCode => response?.statusCode;
-
-  Model Function(dynamic rawPayload, ResponseStatus status)? decoder;
-
-  Model? payload;
-
   ComResponse({
     required this.status,
     required this.request,
     this.response,
     this.payload,
   });
-
   factory ComResponse.fromResponse({
     required http.Response response,
     required ComRequest request,
     Function(dynamic)? preDecorder,
   }) {
-    ResponseStatus status =
+    final ResponseStatus status =
         ComInterface.statusCodeToResponseStatus(response.statusCode);
     Model? payload;
     if (request.decoder != null) {
@@ -46,7 +31,7 @@ class ComResponse<Model> {
         payload = request.decoder!(decodedBody, status) as Model?;
       } catch (e) {
         Print.red(
-            "Unable to decode payload. Error: ${Model.runtimeType} ${e.toString()}",
+            'Unable to decode payload. Error: ${Model.runtimeType} ${e.toString()}',
             name: apiComPackageName);
       }
     }
@@ -59,8 +44,22 @@ class ComResponse<Model> {
     );
   }
 
+  /// Original [ComRequest] used to get the response
+  final ComRequest request;
+
+  /// Raw response from the server [http.Response]
+  final http.Response? response;
+  final ResponseStatus status;
+
+  bool get isSuccess => status == ResponseStatus.success;
+  int? get statusCode => response?.statusCode;
+
+  Model Function(dynamic rawPayload, ResponseStatus status)? decoder;
+
+  Model? payload;
+
   static dynamic _decodeUtf8BodyBytes(Uint8List body) {
-    Map<String, dynamic> decodedJson = jsonDecode(utf8.decode(body));
+    final Map<String, dynamic> decodedJson = jsonDecode(utf8.decode(body));
 
     return decodedJson;
   }

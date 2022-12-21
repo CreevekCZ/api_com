@@ -5,20 +5,20 @@ import 'package:http/http.dart' as http;
 import 'package:palestine_console/palestine_console.dart';
 
 class ComInterface {
+  ComInterface() : _connectivity = Connectivity();
+
   ComConfig config = ComConfig(onConnectionLose: () {
-    Print.red("NO CONNECTIVITY", name: apiComPackageName);
+    Print.red('NO CONNECTIVITY', name: apiComPackageName);
   });
 
   final Connectivity _connectivity;
-
-  ComInterface() : _connectivity = Connectivity();
 
   static void _printResult(
     http.Response response,
     Stopwatch stopwatch,
   ) {
-    String statusMessagePayload =
-        "METHOD: ${response.request!.method}, STATUS: ${response.statusCode}, URL: ${response.request!.url}  ${stopwatch.elapsedMilliseconds} ms";
+    final statusMessagePayload =
+        'METHOD: ${response.request!.method}, STATUS: ${response.statusCode}, URL: ${response.request!.url}  ${stopwatch.elapsedMilliseconds} ms';
 
     if (response.statusCode == 200) {
       Print.green(statusMessagePayload, name: apiComPackageName);
@@ -29,23 +29,23 @@ class ComInterface {
   }
 
   Future<ComResponse<Model>> makeRequest<Model>(ComRequest request) async {
-    Stopwatch stopwatch = Stopwatch()..start();
+    final Stopwatch stopwatch = Stopwatch()..start();
 
     _applyConfigToRequest(request);
 
     try {
       _validateRequest(request);
     } catch (e) {
-      Print.red("Invalid request", name: apiComPackageName);
+      Print.red('Invalid request', name: apiComPackageName);
       return ComResponse<Model>(
         request: request,
         status: ResponseStatus.invalidRequest,
       );
     }
 
-    var connectivityResult = await (_connectivity.checkConnectivity());
+    final connectivityResult = await _connectivity.checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
-      Print.red("NO CONNECTIVITY | ${request.getUrl()}",
+      Print.red('NO CONNECTIVITY | ${request.getUrl()}',
           name: apiComPackageName);
 
       if (config.onConnectionLose != null &&
@@ -61,15 +61,15 @@ class ComInterface {
 
     switch (request.method) {
       case HttpMethod.post:
-        return await _callPost<Model>(request, stopwatch);
+        return _callPost<Model>(request, stopwatch);
       case HttpMethod.get:
-        return await _callGet<Model>(request, stopwatch);
+        return _callGet<Model>(request, stopwatch);
       case HttpMethod.put:
-        return await _callPut<Model>(request, stopwatch);
+        return _callPut<Model>(request, stopwatch);
       case HttpMethod.delete:
-        return await _callDelete<Model>(request, stopwatch);
+        return _callDelete<Model>(request, stopwatch);
       case HttpMethod.patch:
-        return await _callPatch<Model>(request, stopwatch);
+        return _callPatch<Model>(request, stopwatch);
     }
   }
 
@@ -174,15 +174,15 @@ class ComInterface {
   String httpMethodEnumToString(HttpMethod method) {
     switch (method) {
       case HttpMethod.post:
-        return "post";
+        return 'post';
       case HttpMethod.get:
-        return "get";
+        return 'get';
       case HttpMethod.put:
-        return "put";
+        return 'put';
       case HttpMethod.delete:
-        return "delete";
+        return 'delete';
       case HttpMethod.patch:
-        return "patch";
+        return 'patch';
     }
   }
 
@@ -194,17 +194,38 @@ class ComInterface {
       case 201:
         return ResponseStatus.created;
 
-      case 400:
-        return ResponseStatus.unauthorized;
-
-      case 401:
-        return ResponseStatus.unauthorized;
-
       case 202:
         return ResponseStatus.accepted;
 
       case 204:
         return ResponseStatus.noContent;
+
+      case 400:
+        return ResponseStatus.badRequest;
+
+      case 401:
+        return ResponseStatus.unauthorized;
+
+      case 402:
+        return ResponseStatus.paymentRequired;
+
+      case 403:
+        return ResponseStatus.forbidden;
+
+      case 404:
+        return ResponseStatus.notFound;
+
+      case 405:
+        return ResponseStatus.methodNotAllowed;
+
+      case 406:
+        return ResponseStatus.notAcceptable;
+
+      case 422:
+        return ResponseStatus.unprocessableEntity;
+
+      case 429:
+        return ResponseStatus.tooManyRequests;
 
       case 500:
         return ResponseStatus.serverError;
@@ -220,16 +241,20 @@ class ComInterface {
     if (config.preferredProtocol != null) {
       request.protocol = config.preferredProtocol!;
     }
+
+    if (config.sharedHeaders != null) {
+      request.headers.addAll(config.sharedHeaders ?? {});
+    }
   }
 
   void _validateRequest(ComRequest request) {
     if (request.host == null) {
-      throw Exception("Host is null");
+      throw Exception('Host is null');
     }
   }
 
   Future<bool> hasInternetConnection() async {
-    var connectionStatus = await _connectivity.checkConnectivity();
+    final connectionStatus = await _connectivity.checkConnectivity();
     return connectionStatus != ConnectivityResult.none;
   }
 

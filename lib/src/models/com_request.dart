@@ -4,6 +4,18 @@ import 'package:api_com/src/enums/response_status.dart';
 import 'package:api_com/src/extensions/uri_php_extension.dart';
 
 class ComRequest<Model> {
+  ComRequest({
+    this.protocol = 'https',
+    required this.method,
+    this.host,
+    required this.uri,
+    this.token,
+    this.parameters,
+    this.decoder,
+    Map<String, String>? headers,
+    this.skipOnConnectionLoseAction = false,
+    this.ignorePreDecoder = false,
+  }) : _headers = headers;
   final HttpMethod method;
 
   /// https by default
@@ -45,10 +57,10 @@ class ComRequest<Model> {
   Map<String, dynamic>? parameters;
 
   Map<String, String> get headers {
-    var headersList = {'Content-Type': 'application/json; charset=UTF-8'};
+    final headersList = {'Content-Type': 'application/json; charset=UTF-8'};
 
     if (token != null) {
-      headersList["Authorization"] = "Bearer " + token!;
+      headersList['Authorization'] = 'Bearer ${token!}';
     }
 
     if (_headers != null) {
@@ -64,22 +76,9 @@ class ComRequest<Model> {
   /// if this parameter is true than decoding of rawPayload will ignore ComConfig:preDecoder function
   bool ignorePreDecoder;
 
-  ComRequest({
-    this.protocol = "https",
-    required this.method,
-    this.host,
-    required this.uri,
-    this.token,
-    this.parameters,
-    this.decoder,
-    Map<String, String>? headers,
-    this.skipOnConnectionLoseAction = false,
-    this.ignorePreDecoder = false,
-  }) : _headers = headers;
-
   String getUrl() {
     if (host == null) {
-      throw Exception("Host is null");
+      throw Exception('Host is null');
     }
 
     return UriPhpEstension.encodeForPhpServer(
@@ -95,7 +94,7 @@ class ComRequest<Model> {
     }
 
     if (parameters == null) {
-      return "";
+      return '';
     }
 
     return jsonEncode(parameters);

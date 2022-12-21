@@ -1,6 +1,20 @@
 import 'dart:convert';
+import 'package:api_com/api_com.dart';
 
 class ComConfig {
+  ComConfig({
+    Encoding? encoding,
+    this.preferredProtocol,
+    this.mainHost,
+    this.onConnectionLose,
+    this.preDecorder,
+    this.sharedHeaders,
+  }) : encoding = encoding ?? Encoding.getByName('utf-8')!;
+
+  /// Shared headers that will be added to every request.
+  /// You can use this property to add headers like `Authorization` or `Content-Type`.
+  final Map<String, String>? sharedHeaders;
+
   /// UTF-8 by default
   final Encoding encoding;
 
@@ -32,12 +46,4 @@ class ComConfig {
   /// );
   /// ```
   final dynamic Function(dynamic)? preDecorder;
-
-  ComConfig({
-    Encoding? encoding,
-    this.preferredProtocol,
-    this.mainHost,
-    this.onConnectionLose,
-    this.preDecorder,
-  }) : this.encoding = encoding ?? Encoding.getByName("utf-8")!;
 }

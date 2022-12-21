@@ -5,25 +5,25 @@ extension UriPhpEstension on Uri {
     required String uri,
     required Map<String, dynamic>? parameters,
   }) {
-    String result = protocol + "://" + host + uri;
+    final String result = '$protocol://$host$uri';
 
-    String encodedParameters = "";
-    String andSymbol = !uri.contains("?") ? "?" : "&";
+    String encodedParameters = '';
+    String andSymbol = !uri.contains('?') ? '?' : '&';
 
-    Map<String, dynamic> arrayParameters = {};
+    final Map<String, dynamic> arrayParameters = {};
 
     if (parameters != null) {
       parameters.forEach(
         (key, value) {
-          var encodedValue = Uri.encodeComponent(value.toString());
+          final encodedValue = Uri.encodeComponent(value.toString());
 
           if (value is Iterable) {
             arrayParameters[key] = value;
             return;
           }
           if (value != null) {
-            encodedParameters += "$andSymbol$key=$encodedValue";
-            andSymbol = "&";
+            encodedParameters += '$andSymbol$key=$encodedValue';
+            andSymbol = '&';
           }
         },
       );
@@ -37,15 +37,15 @@ extension UriPhpEstension on Uri {
 
   static String _encodeArrayParameters(
       arrayParameters, encodedParameters, andSymbol) {
-    andSymbol = !encodedParameters.contains("?") ? "?" : "&";
+    andSymbol = !encodedParameters.contains('?') ? '?' : '&';
 
     if (arrayParameters.isNotEmpty) {
       arrayParameters.forEach((key, value) {
-        for (var item in value) {
+        for (final item in value) {
           if (item != null) {
-            var encodedValue = Uri.encodeComponent(item.toString());
-            encodedParameters += "$andSymbol$key[]=$encodedValue";
-            andSymbol = "&";
+            final encodedValue = Uri.encodeComponent(item.toString());
+            encodedParameters += '$andSymbol$key[]=$encodedValue';
+            andSymbol = '&';
           }
         }
       });

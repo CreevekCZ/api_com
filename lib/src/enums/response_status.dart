@@ -11,4 +11,11 @@ enum ResponseStatus {
   none,
   connectionProblem,
   invalidRequest,
+  notAcceptable,
+  unprocessableEntity,
+  tooManyRequests,
+  methodNotAllowed,
+  forbidden,
+  paymentRequired,
+  badRequest,
 }
