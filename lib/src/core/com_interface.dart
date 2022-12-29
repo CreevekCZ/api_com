@@ -31,7 +31,7 @@ class ComInterface {
   Future<ComResponse<Model>> makeRequest<Model>(ComRequest request) async {
     final Stopwatch stopwatch = Stopwatch()..start();
 
-    _applyConfigToRequest(request);
+    request = _applyConfigToRequest(request);
 
     try {
       _validateRequest(request);
@@ -233,18 +233,23 @@ class ComInterface {
     return ResponseStatus.unknownStatus;
   }
 
-  void _applyConfigToRequest(ComRequest request) {
+  ComRequest _applyConfigToRequest(ComRequest request) {
     if (request.host == null && config.mainHost != null) {
-      request.host = config.mainHost!;
+      request = request.copyWith(host: config.mainHost!);
     }
 
     if (config.preferredProtocol != null) {
-      request.protocol = config.preferredProtocol!;
+      request = request.copyWith(protocol: config.preferredProtocol!);
     }
 
     if (config.sharedHeaders != null) {
-      request.headers.addAll(config.sharedHeaders ?? {});
+      final Map<String, String> allHeaders = Map.from(request.headers);
+      allHeaders.addAll(config.sharedHeaders ?? {});
+
+      request = request.copyWith(headers: allHeaders);
     }
+
+    return request;
   }
 
   void _validateRequest(ComRequest request) {

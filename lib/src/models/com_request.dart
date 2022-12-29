@@ -16,17 +16,18 @@ class ComRequest<Model> {
     this.skipOnConnectionLoseAction = false,
     this.ignorePreDecoder = false,
   }) : _headers = headers;
+
   final HttpMethod method;
 
   /// https by default
-  String protocol;
+  final String protocol;
 
   /// for example:
   /// ```dart
   /// var host = "example.com";
   /// var host = "www.example.com";
   /// ```
-  String? host;
+  final String? host;
 
   /// for example:
   /// ```dart
@@ -49,12 +50,12 @@ class ComRequest<Model> {
   /// var authorization = {"Authorization": "x-token xxxxx",};
   /// ```
   /// to headers attribute of [ComRequest]
-  String? token;
+  final String? token;
 
-  Model? Function(dynamic rawPayload, ResponseStatus status)? decoder;
+  final Model? Function(dynamic rawPayload, ResponseStatus status)? decoder;
 
   ///Parameters are automatically sent to the server as request JSON body but in the case of GET method they are encoded in URL as GET parameters
-  Map<String, dynamic>? parameters;
+  final Map<String, dynamic>? parameters;
 
   Map<String, String> get headers {
     final headersList = {'Content-Type': 'application/json; charset=UTF-8'};
@@ -71,10 +72,10 @@ class ComRequest<Model> {
   }
 
   /// if this parameter is true then onConnectionLose() action defined in ConConfig will not be called
-  bool skipOnConnectionLoseAction;
+  final bool skipOnConnectionLoseAction;
 
   /// if this parameter is true than decoding of rawPayload will ignore ComConfig:preDecoder function
-  bool ignorePreDecoder;
+  final bool ignorePreDecoder;
 
   String getUrl() {
     if (host == null) {
@@ -88,15 +89,42 @@ class ComRequest<Model> {
     );
   }
 
-  String getBody() {
+  String? getBody() {
     if (method == HttpMethod.get) {
       throw Exception("GET method doesn't have body");
     }
 
     if (parameters == null) {
-      return '';
+      return null;
     }
 
     return jsonEncode(parameters);
+  }
+
+  ComRequest<Model> copyWith({
+    String? protocol,
+    HttpMethod? method,
+    String? host,
+    String? uri,
+    String? token,
+    Map<String, dynamic>? parameters,
+    Model? Function(dynamic rawPayload, ResponseStatus status)? decoder,
+    Map<String, String>? headers,
+    bool? skipOnConnectionLoseAction,
+    bool? ignorePreDecoder,
+  }) {
+    return ComRequest<Model>(
+      protocol: protocol ?? this.protocol,
+      method: method ?? this.method,
+      host: host ?? this.host,
+      uri: uri ?? this.uri,
+      token: token ?? this.token,
+      parameters: parameters ?? this.parameters,
+      decoder: decoder ?? this.decoder,
+      headers: headers ?? _headers,
+      skipOnConnectionLoseAction:
+          skipOnConnectionLoseAction ?? this.skipOnConnectionLoseAction,
+      ignorePreDecoder: ignorePreDecoder ?? this.ignorePreDecoder,
+    );
   }
 }

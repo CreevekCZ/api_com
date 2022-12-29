@@ -46,4 +46,22 @@ class ComConfig {
   /// );
   /// ```
   final dynamic Function(dynamic)? preDecorder;
+
+  ComConfig copyWith({
+    Encoding? encoding,
+    String? preferredProtocol,
+    String? mainHost,
+    Function()? onConnectionLose,
+    dynamic Function(dynamic)? preDecorder,
+    Map<String, String>? sharedHeaders,
+  }) {
+    return ComConfig(
+      encoding: encoding ?? this.encoding,
+      preferredProtocol: preferredProtocol ?? this.preferredProtocol,
+      mainHost: mainHost ?? this.mainHost,
+      onConnectionLose: onConnectionLose ?? this.onConnectionLose,
+      preDecorder: preDecorder ?? this.preDecorder,
+      sharedHeaders: sharedHeaders ?? this.sharedHeaders,
+    );
+  }
 }
