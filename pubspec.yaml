@@ -9,11 +9,11 @@ environment:
   
 
 dependencies: 
-  connectivity_plus: ^1.2.0
-  http: ^0.13.3
+  connectivity_plus: ^3.0.3
+  http: ^0.13.5
   palestine_console: ^0.0.10
   uuid: ^3.0.4
 
 dev_dependencies:
   flutter_lints: ^2.0.1
-  test: ^1.21.1
+  test: ^1.24.0
