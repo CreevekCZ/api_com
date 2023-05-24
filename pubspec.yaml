@@ -11,7 +11,7 @@ environment:
 dependencies: 
   collection: ^1.15.0
   connectivity_plus: ^4.0.1
-  http: ^1.0.0
+  http: ^0.13.5
   palestine_console: ^0.0.10
 
 dev_dependencies:
