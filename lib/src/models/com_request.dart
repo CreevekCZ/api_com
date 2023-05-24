@@ -74,7 +74,7 @@ class ComRequest<Model> {
   /// if this parameter is true then onConnectionLose() action defined in ConConfig will not be called
   final bool skipOnConnectionLoseAction;
 
-  /// if this parameter is true than decoding of rawPayload will ignore ComConfig:preDecoder function
+  /// if this parameter is true than decoding of rawPayload will ignore [ComConfig:preDecoder] function
   final bool ignorePreDecoder;
 
   String getUrl() {

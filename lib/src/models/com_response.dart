@@ -12,6 +12,7 @@ class ComResponse<Model> {
     this.response,
     this.payload,
   });
+
   factory ComResponse.fromResponse({
     required http.Response response,
     required ComRequest request,
@@ -22,7 +23,7 @@ class ComResponse<Model> {
     Model? payload;
     if (request.decoder != null) {
       try {
-        dynamic decodedBody = _decodeUtf8BodyBytes(response.bodyBytes);
+        dynamic decodedBody = decodeUtf8BodyBytes(response.bodyBytes);
 
         if (preDecorder != null && request.ignorePreDecoder == false) {
           decodedBody = preDecorder(decodedBody);
@@ -58,8 +59,8 @@ class ComResponse<Model> {
 
   Model? payload;
 
-  static dynamic _decodeUtf8BodyBytes(Uint8List body) {
-    final Map<String, dynamic> decodedJson = jsonDecode(utf8.decode(body));
+  static dynamic decodeUtf8BodyBytes(Uint8List body) {
+    final dynamic decodedJson = jsonDecode(utf8.decode(body));
 
     return decodedJson;
   }

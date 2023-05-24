@@ -3,20 +3,65 @@ import 'package:api_com/src/extensions/uri_php_extension.dart'
 import 'package:test/test.dart';
 
 void main() {
-  test('Test encoding URL with array of parameters for php server', () {
-    const String exceptationEncoded =
-        'https://example.com/api/v1/events?active=true&posId[]=1&posId[]=2&userId[]=3';
+  group('UriPhpEstension', () {
+    test('should encode URL with array of parameters for php server', () {
+      const String expectedEncoded =
+          'https://example.com/api/v1/events?active=true&posId[]=1&posId[]=2&userId[]=3';
 
-    final encodedUrl = UriPhpEstension.encodeForPhpServer(
-      host: 'example.com',
-      uri: '/api/v1/events',
-      parameters: {
-        'active': true,
-        'posId': [1, 2],
-        'userId': [3],
-      },
-    );
+      final encodedUrl = UriPhpEstension.encodeForPhpServer(
+        host: 'example.com',
+        uri: '/api/v1/events',
+        parameters: {
+          'active': true,
+          'posId': [1, 2],
+          'userId': [3],
+        },
+      );
 
-    expect(encodedUrl, exceptationEncoded);
+      expect(encodedUrl, expectedEncoded);
+    });
+
+    test('should encode URL with no parameters for php server', () {
+      const String expectedEncoded = 'https://example.com/api/v1/events';
+
+      final encodedUrl = UriPhpEstension.encodeForPhpServer(
+        host: 'example.com',
+        uri: '/api/v1/events',
+        parameters: {},
+      );
+
+      expect(encodedUrl, expectedEncoded);
+    });
+
+    test('should encode URL with special characters for php server', () {
+      const String expectedEncoded =
+          'https://example.com/api/v1/events?name=John%20Doe&email=john%40example.com';
+
+      final encodedUrl = UriPhpEstension.encodeForPhpServer(
+        host: 'example.com',
+        uri: '/api/v1/events',
+        parameters: {
+          'name': 'John Doe',
+          'email': 'john@example.com',
+        },
+      );
+
+      expect(encodedUrl, expectedEncoded);
+    });
+
+    test('should encode URL with null parameters for php server', () {
+      const String expectedEncoded = 'https://example.com/api/v1/events';
+
+      final encodedUrl = UriPhpEstension.encodeForPhpServer(
+        host: 'example.com',
+        uri: '/api/v1/events',
+        parameters: {
+          'param1': null,
+          'param2': null,
+        },
+      );
+
+      expect(encodedUrl, expectedEncoded);
+    });
   });
 }
