@@ -1,17 +1,24 @@
 import 'dart:convert';
 import 'package:api_com/api_com.dart';
 import 'package:api_com/src/core/com.dart';
+import 'package:api_com/src/core/com_connectivity.dart';
 import 'package:http/http.dart' as http;
 import 'package:palestine_console/palestine_console.dart';
 
-class ComInterface {
-  ComInterface() : _connectivity = Connectivity();
+abstract class ComInterface {
+  late ComConfig _config;
+  late ComConnectivity _connectivity;
 
-  ComConfig config = ComConfig(onConnectionLose: () {
-    Print.red('NO CONNECTIVITY', name: apiComPackageName);
-  });
+  ComConfig get config => _config;
 
-  final Connectivity _connectivity;
+  Future<void> setConfig(ComConfig config) async {
+    _config = ComConfig(onConnectionLose: () {
+      Print.red('NO CONNECTIVITY', name: apiComPackageName);
+    });
+
+    await _connectivity.dispose();
+    _connectivity = ComConnectivity(config);
+  }
 
   static void _printResult(
     http.Response response,
@@ -43,8 +50,8 @@ class ComInterface {
       );
     }
 
-    final connectivityResult = await _connectivity.checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none) {
+    final connectivityResult = await _connectivity.isInternetAvailable();
+    if (connectivityResult == false) {
       Print.red('NO CONNECTIVITY | ${request.getUrl()}',
           name: apiComPackageName);
 
@@ -256,14 +263,5 @@ class ComInterface {
     if (request.host == null) {
       throw Exception('Host is null');
     }
-  }
-
-  Future<bool> hasInternetConnection() async {
-    final connectionStatus = await _connectivity.checkConnectivity();
-    return connectionStatus != ConnectivityResult.none;
-  }
-
-  Connectivity getConnectivityInstance() {
-    return _connectivity;
   }
 }

@@ -47,6 +47,8 @@ class ComConfig {
   /// ```
   final dynamic Function(dynamic)? preDecorder;
 
+  String getUrl() => '$preferredProtocol://$mainHost';
+
   ComConfig copyWith({
     Encoding? encoding,
     String? preferredProtocol,

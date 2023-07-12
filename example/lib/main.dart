@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:api_com/api_com.dart';
 
 void main() {
-  Com.config = ComConfig(
+  Com.setConfig(ComConfig(
     mainHost: 'api.spacexdata.com/v4',
     preferredProtocol: 'https',
-  );
+  ));
 
   runApp(const MyApp());
 }
@@ -87,8 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
       Future.sync(() {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(response.response?.body ?? 'Failed to fetch crew list'),
+            content: Text(
+                response.httpResponse?.body ?? 'Failed to fetch crew list'),
           ),
         );
       });

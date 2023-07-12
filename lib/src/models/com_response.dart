@@ -9,7 +9,7 @@ class ComResponse<Model> {
   ComResponse({
     required this.status,
     required this.request,
-    this.response,
+    this.httpResponse,
     this.payload,
   });
 
@@ -38,7 +38,7 @@ class ComResponse<Model> {
     }
 
     return ComResponse(
-      response: response,
+      httpResponse: response,
       request: request,
       status: status,
       payload: payload,
@@ -49,13 +49,21 @@ class ComResponse<Model> {
   final ComRequest request;
 
   /// Raw response from the server [http.Response]
-  final http.Response? response;
+  final http.Response? httpResponse;
   final ResponseStatus status;
 
   bool get isSuccess => status == ResponseStatus.success;
-  int? get statusCode => response?.statusCode;
 
-  Model Function(dynamic rawPayload, ResponseStatus status)? decoder;
+  int? get statusCode => httpResponse?.statusCode;
+
+  dynamic get rawPayload => httpResponse?.body;
+
+  Model Function(
+    dynamic rawPayload,
+    ResponseStatus status, {
+    bool isSuccess,
+    http.Response httpResponse,
+  })? decoder;
 
   Model? payload;
 
