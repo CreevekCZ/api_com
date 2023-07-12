@@ -18,8 +18,8 @@ class ComResponse<Model> {
     required ComRequest request,
     Function(dynamic)? preDecorder,
   }) {
-    final ResponseStatus status =
-        ComInterface.statusCodeToResponseStatus(response.statusCode);
+    final ResponseStatus status = ResponseStatus.fromCode(response.statusCode);
+
     Model? payload;
     if (request.decoder != null) {
       try {

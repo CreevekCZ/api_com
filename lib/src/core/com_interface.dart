@@ -186,53 +186,6 @@ class ComInterface {
     }
   }
 
-  static ResponseStatus statusCodeToResponseStatus(int statusCode) {
-    switch (statusCode) {
-      case 200:
-        return ResponseStatus.success;
-
-      case 201:
-        return ResponseStatus.created;
-
-      case 202:
-        return ResponseStatus.accepted;
-
-      case 204:
-        return ResponseStatus.noContent;
-
-      case 400:
-        return ResponseStatus.badRequest;
-
-      case 401:
-        return ResponseStatus.unauthorized;
-
-      case 402:
-        return ResponseStatus.paymentRequired;
-
-      case 403:
-        return ResponseStatus.forbidden;
-
-      case 404:
-        return ResponseStatus.notFound;
-
-      case 405:
-        return ResponseStatus.methodNotAllowed;
-
-      case 406:
-        return ResponseStatus.notAcceptable;
-
-      case 422:
-        return ResponseStatus.unprocessableEntity;
-
-      case 429:
-        return ResponseStatus.tooManyRequests;
-
-      case 500:
-        return ResponseStatus.serverError;
-    }
-    return ResponseStatus.unknownStatus;
-  }
-
   ComRequest _applyConfigToRequest(ComRequest request) {
     if (request.host == null && config.mainHost != null) {
       request = request.copyWith(host: config.mainHost!);
