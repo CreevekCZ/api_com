@@ -7,70 +7,116 @@ import 'package:palestine_console/palestine_console.dart';
 class ComInterface {
   ComInterface() : _connectivity = Connectivity();
 
+  final Connectivity _connectivity;
+
   ComConfig config = ComConfig(onConnectionLose: () {
     Print.red('NO CONNECTIVITY', name: apiComPackageName);
   });
 
-  final Connectivity _connectivity;
-
-  static void _printResult(
-    http.Response response,
-    Stopwatch stopwatch,
-  ) {
-    final statusMessagePayload =
-        'METHOD: ${response.request!.method}, STATUS: ${response.statusCode}, URL: ${response.request!.url}  ${stopwatch.elapsedMilliseconds} ms';
-
-    if (response.statusCode == 200) {
-      Print.green(statusMessagePayload, name: apiComPackageName);
-    } else {
-      Print.red(statusMessagePayload, name: apiComPackageName);
-      Print.white(response.body, name: apiComPackageName);
-    }
-  }
-
   Future<ComResponse<Model>> makeRequest<Model>(ComRequest request) async {
-    final Stopwatch stopwatch = Stopwatch()..start();
-
     request = _applyConfigToRequest(request);
+
+    final Stopwatch stopwatch = Stopwatch()..start();
 
     try {
       _validateRequest(request);
     } catch (e) {
-      Print.red('Invalid request', name: apiComPackageName);
-      return ComResponse<Model>(
-        request: request,
-        status: ResponseStatus.invalidRequest,
-      );
+      return _handleInvalidRequest(request);
     }
 
     final connectivityResult = await _connectivity.checkConnectivity();
+
     if (connectivityResult == ConnectivityResult.none) {
-      Print.red('NO CONNECTIVITY | ${request.getUrl()}',
-          name: apiComPackageName);
-
-      if (config.onConnectionLose != null &&
-          request.skipOnConnectionLoseAction == false) {
-        config.onConnectionLose!();
-      }
-
-      return ComResponse(
-        status: ResponseStatus.connectionProblem,
-        request: request,
-      );
+      return _handleNoConnectivity(request);
     }
 
-    switch (request.method) {
+    final ComResponse<Model> response = await _callHttpMethod<Model>(
+      request.method,
+      request,
+      stopwatch,
+    );
+
+    return response;
+  }
+
+  ComResponse<Model> _handleInvalidRequest<Model>(ComRequest request) {
+    Print.red('Invalid request', name: apiComPackageName);
+
+    final ComResponse<Model> response = ComResponse<Model>(
+      request: request,
+      status: ResponseStatus.invalidRequest,
+    );
+
+    config.onMakeRequestComplete?.call(response);
+
+    return response;
+  }
+
+  ComResponse<Model> _handleNoConnectivity<Model>(ComRequest request) {
+    Print.red('NO CONNECTIVITY | ${request.getUrl()}', name: apiComPackageName);
+
+    if (config.onConnectionLose != null &&
+        request.skipOnConnectionLoseAction == false) {
+      config.onConnectionLose!();
+    }
+
+    final ComResponse<Model> response = ComResponse<Model>(
+      status: ResponseStatus.connectionProblem,
+      request: request,
+    );
+
+    config.onMakeRequestComplete?.call(response);
+
+    return response;
+  }
+
+  Future<ComResponse<Model>> _callHttpMethod<Model>(
+    HttpMethod method,
+    ComRequest request,
+    Stopwatch stopwatch,
+  ) async {
+    late ComResponse<Model> response;
+
+    switch (method) {
       case HttpMethod.post:
-        return _callPost<Model>(request, stopwatch);
+        response = await _callPost<Model>(request, stopwatch);
+        break;
       case HttpMethod.get:
-        return _callGet<Model>(request, stopwatch);
+        response = await _callGet<Model>(request, stopwatch);
+        break;
       case HttpMethod.put:
-        return _callPut<Model>(request, stopwatch);
+        response = await _callPut<Model>(request, stopwatch);
+        break;
       case HttpMethod.delete:
-        return _callDelete<Model>(request, stopwatch);
+        response = await _callDelete<Model>(request, stopwatch);
+        break;
       case HttpMethod.patch:
-        return _callPatch<Model>(request, stopwatch);
+        response = await _callPatch<Model>(request, stopwatch);
+        break;
     }
+
+    config.onMakeRequestComplete?.call(response);
+
+    return response;
+  }
+
+  ComRequest _applyConfigToRequest(ComRequest request) {
+    if (request.host == null && config.mainHost != null) {
+      request = request.copyWith(host: config.mainHost!);
+    }
+
+    if (config.preferredProtocol != null) {
+      request = request.copyWith(protocol: config.preferredProtocol!);
+    }
+
+    if (config.sharedHeaders != null) {
+      final Map<String, String> allHeaders = Map.from(request.headers);
+      allHeaders.addAll(config.sharedHeaders ?? {});
+
+      request = request.copyWith(headers: allHeaders);
+    }
+
+    return request;
   }
 
   Future<ComResponse<Model>> _callPost<Model>(
@@ -171,38 +217,19 @@ class ComInterface {
     );
   }
 
-  String httpMethodEnumToString(HttpMethod method) {
-    switch (method) {
-      case HttpMethod.post:
-        return 'post';
-      case HttpMethod.get:
-        return 'get';
-      case HttpMethod.put:
-        return 'put';
-      case HttpMethod.delete:
-        return 'delete';
-      case HttpMethod.patch:
-        return 'patch';
+  void _printResult<Model>(
+    http.Response response,
+    Stopwatch stopwatch,
+  ) {
+    final statusMessagePayload =
+        'METHOD: ${response.request!.method}, STATUS: ${response.statusCode}, URL: ${response.request!.url}  ${stopwatch.elapsedMilliseconds} ms';
+
+    if (response.statusCode == 200) {
+      Print.green(statusMessagePayload, name: apiComPackageName);
+    } else {
+      Print.red(statusMessagePayload, name: apiComPackageName);
+      Print.blue(response.body, name: apiComPackageName);
     }
-  }
-
-  ComRequest _applyConfigToRequest(ComRequest request) {
-    if (request.host == null && config.mainHost != null) {
-      request = request.copyWith(host: config.mainHost!);
-    }
-
-    if (config.preferredProtocol != null) {
-      request = request.copyWith(protocol: config.preferredProtocol!);
-    }
-
-    if (config.sharedHeaders != null) {
-      final Map<String, String> allHeaders = Map.from(request.headers);
-      allHeaders.addAll(config.sharedHeaders ?? {});
-
-      request = request.copyWith(headers: allHeaders);
-    }
-
-    return request;
   }
 
   void _validateRequest(ComRequest request) {
@@ -218,5 +245,20 @@ class ComInterface {
 
   Connectivity getConnectivityInstance() {
     return _connectivity;
+  }
+
+  String httpMethodEnumToString(HttpMethod method) {
+    switch (method) {
+      case HttpMethod.post:
+        return 'post';
+      case HttpMethod.get:
+        return 'get';
+      case HttpMethod.put:
+        return 'put';
+      case HttpMethod.delete:
+        return 'delete';
+      case HttpMethod.patch:
+        return 'patch';
+    }
   }
 }

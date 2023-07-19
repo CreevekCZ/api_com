@@ -9,6 +9,7 @@ class ComConfig {
     this.onConnectionLose,
     this.preDecorder,
     this.sharedHeaders,
+    this.onMakeRequestComplete,
   }) : encoding = encoding ?? Encoding.getByName('utf-8')!;
 
   /// Shared headers that will be added to every request.
@@ -47,6 +48,20 @@ class ComConfig {
   /// ```
   final dynamic Function(dynamic)? preDecorder;
 
+  /// This function is called when the request is completed.
+  /// You can use this function to handle errors or to log the request.
+  /// ```dart
+  /// Com.config = ComConfig(
+  ///  onMakeRequestComplete: (response) {
+  ///   if (response.isSuccess) {
+  ///    print('Request completed successfully');
+  ///  } else {
+  ///   print('Request failed with status code ${response.statusCode}');
+  /// }
+  /// ...
+  /// ```
+  final void Function(ComResponse response)? onMakeRequestComplete;
+
   ComConfig copyWith({
     Encoding? encoding,
     String? preferredProtocol,
@@ -54,6 +69,7 @@ class ComConfig {
     Function()? onConnectionLose,
     dynamic Function(dynamic)? preDecorder,
     Map<String, String>? sharedHeaders,
+    void Function(ComResponse response)? onMakeRequestComplete,
   }) {
     return ComConfig(
       encoding: encoding ?? this.encoding,
@@ -62,6 +78,8 @@ class ComConfig {
       onConnectionLose: onConnectionLose ?? this.onConnectionLose,
       preDecorder: preDecorder ?? this.preDecorder,
       sharedHeaders: sharedHeaders ?? this.sharedHeaders,
+      onMakeRequestComplete:
+          onMakeRequestComplete ?? this.onMakeRequestComplete,
     );
   }
 }

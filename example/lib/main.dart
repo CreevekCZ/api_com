@@ -6,6 +6,10 @@ void main() {
   Com.config = ComConfig(
     mainHost: 'api.spacexdata.com/v4',
     preferredProtocol: 'https',
+    onMakeRequestComplete: (response) {
+      // ignore: avoid_print
+      print('Request completed with status code: ${response.statusCode}');
+    },
   );
 
   runApp(const MyApp());

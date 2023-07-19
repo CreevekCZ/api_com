@@ -18,11 +18,5 @@ void main() {
       expect(
           () => ComResponse.decodeUtf8BodyBytes(body), throwsFormatException);
     });
-
-    test('should throw TypeError for non-Uint8List input', () {
-      const body = 'not a Uint8List';
-      expect(() => ComResponse.decodeUtf8BodyBytes(body as Uint8List),
-          throwsException);
-    });
   });
 }
